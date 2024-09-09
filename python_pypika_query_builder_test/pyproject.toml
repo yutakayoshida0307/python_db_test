@@ -1,0 +1,13 @@
+[project]
+name = "python-db-test"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "mysql-connector-python>=9.0.0",
+    "pypika>=0.48.9",
+    "pytest-mock>=3.14.0",
+    "pytest>=8.3.2",
+    "sqlalchemy>=2.0.33",
+]

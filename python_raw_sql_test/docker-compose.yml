@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  db:
+    build: ./.container/mysql
+    platform: linux/x86_64
+    ports:
+      - 3307:3306
+    volumes:
+      - db-store:/var/lib/mysql
+      - ./.container/mysql/logs:/var/log/mysql
+      - ./setup/database/init:/docker-entrypoint-initdb.d
+      - ./.container/mysql/conf.d:/etc/mysql/conf.d
+volumes:
+  db-store:

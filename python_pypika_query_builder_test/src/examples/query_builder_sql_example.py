@@ -1,0 +1,90 @@
+from src.db.mysql_db import DB
+from pypika import MySQLQuery as Query, Table, Parameter
+
+
+def select_sql(select_value):
+    table = Table("test_table")
+    query = Query.from_(table).select("*").where(table["column_name"] == select_value)
+    return DB().select_query(str(query))
+
+
+def insert_sql(insert_value):
+    table = Table("test_table")
+    query = Query.into(table).columns("column_name").insert(insert_value)
+    return DB().exec_query(str(query))
+
+
+def select_parameterized_sql(select_value):
+    table = Table("test_table")
+
+    query = (
+        Query.from_(table).select("*").where(table["column_name"] == Parameter("%s"))
+    )
+    return DB().select_query(str(query), param=(select_value,))
+
+
+def insert_complex_sql(
+    id,
+    param1_1,
+    param1_2,
+    param_1_3,
+    param_1_4,
+    param2_1,
+    param2_2,
+    param2_3,
+    param3_1,
+    param3_2,
+    param3_3,
+):
+    query = (
+        Query.into("test_complex_table")
+        .columns(
+            "id",
+            "param1_1",
+            "param1_2",
+            "param_1_3",
+            "param_1_4",
+            "param_unused_1",
+            "param_unused_2",
+            "param2_1",
+            "param2_2",
+            "param2_3",
+            "param3_1",
+            "param3_2",
+            "param3_3",
+        )
+        .insert(
+            Parameter("%s"),
+            Parameter("%s"),
+            Parameter("%s"),
+            Parameter("%s"),
+            Parameter("%s"),
+            Parameter("%s"),
+            Parameter("%s"),
+            Parameter("%s"),
+            Parameter("%s"),
+            Parameter("%s"),
+            Parameter("%s"),
+            Parameter("%s"),
+            Parameter("%s"),
+        )
+    )
+
+    return DB().exec_query(
+        str(query),
+        param=(
+            id,
+            param1_1,
+            param1_2,
+            param_1_3,
+            param_1_4,
+            "",
+            "",
+            param2_1,
+            param2_2,
+            param2_3,
+            param3_1,
+            param3_2,
+            param3_3,
+        ),
+    )
