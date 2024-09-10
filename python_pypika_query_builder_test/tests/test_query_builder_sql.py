@@ -78,8 +78,8 @@ def test_raw_sql_complex_insert(cursor):
         id=1,
         param1_1="param1_1",
         param1_2="param1_2",
-        param_1_3="param1_3",
-        param_1_4="param1_4",
+        param1_3="param1_3",
+        param1_4="param1_4",
         param2_1="",
         param2_2="",
         param2_3="",
@@ -96,8 +96,8 @@ def test_raw_sql_complex_insert(cursor):
     assert result is not None
     assert result[0]["param1_1"] == "param1_1"
     assert result[0]["param1_2"] == "param1_2"
-    assert result[0]["param_1_3"] == "param_1_3"
-    assert result[0]["param_1_4"] == "param_1_4"
+    assert result[0]["param1_3"] == "param1_3"
+    assert result[0]["param1_4"] == "param1_4"
     assert result[0]["param2_1"] == ""
     assert result[0]["param2_2"] == ""
     assert result[0]["param2_3"] == ""
@@ -127,22 +127,32 @@ def test_query_builder_where_select(cursor):
     query = (
         Query.into("test_complex_table2")
         .columns("column_name", "param1", "param2", "param3")
+        .insert("column2", 0, 1, 0)
+    )
+    db.exec_query(str(query))
+
+    query = (
+        Query.into("test_complex_table2")
+        .columns("column_name", "param1", "param2", "param3")
         .insert("column2", 1, 1, 1)
     )
     db.exec_query(str(query))
 
+    query = (
+        Query.into("test_complex_table2")
+        .columns("column_name", "param1", "param2", "param3")
+        .insert("column2", 0, 0, 1)
+    )
+    db.exec_query(str(query))
+
     result = select_complex_sql("new_value")
-    # sizeが3であること
-    assert len(result) == 3
+    assert len(result) == 5
 
     result = select_complex_sql("new_value", param1=1)
-    # sizeが3であること
     assert len(result) == 3
 
     result = select_complex_sql("new_value", param1=1, param2=1)
-    # sizeが2であること
     assert len(result) == 2
 
     result = select_complex_sql("new_value", param1=1, param2=1, param3=1)
-    # sizeが1であること
     assert len(result) == 1
