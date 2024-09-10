@@ -1,5 +1,5 @@
 from src.db.mysql_db import DB
-from pypika import MySQLQuery as Query, Table, Parameter
+from pypika import MySQLQuery as Query, Table, Parameter, Criterion
 
 
 def select_sql(select_value):
@@ -88,3 +88,25 @@ def insert_complex_sql(
             param3_3,
         ),
     )
+
+
+def select_complex_sql(select_value, param1=None, param2=None, param3=None):
+    table = Table("test_complex_table2")
+    query = Query.from_(table).select("*")
+    where_terms = []
+    params = ()
+
+    if param1 is not None:
+        where_terms.append(table["param1"] == Parameter("%s"))
+        params += (param1,)
+    if param2 is not None:
+        where_terms.append(table["param2"] == Parameter("%s"))
+        params += (param2,)
+    if param3 is not None:
+        where_terms.append(table["param3"] == Parameter("%s"))
+        params += (param3,)
+
+    if where_terms:
+        query = query.where(Criterion.all(where_terms))
+
+    return DB().select_query(str(query), param=params)
